@@ -1,6 +1,6 @@
 # Puckman
-##useless discord bot
-###like, completely useless
+## useless discord bot
+### like, completely useless
 
 commands include:
 - /howtall: tells you how tall a server member is. Gets heights from a google sheet using the google sheets API
