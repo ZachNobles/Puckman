@@ -32,13 +32,13 @@ except KeyError:
     print("no token found in .env")
 
 try:
-    STEVEN = os.environ["STEVEN"]
-    BERNARDO = os.environ["BERNARDO"]
-    GENERAL = os.environ["GENERAL"]
-    QUESTIONS = os.environ["BOT_CHANNEL"]
-    BOT_TAG = os.environ["BOT_TAG"]
-    SCOPES = os.environ["SHEET_SCOPES"]
-    HEIGHT_SHEET = os.environ["SHEET_ID"]
+    STEVEN = str(os.environ["STEVEN"])
+    BERNARDO = str(os.environ["BERNARDO"])
+    GENERAL = int(os.environ["GENERAL"])
+    QUESTIONS = int(os.environ["BOT_CHANNEL"])
+    BOT_TAG = str(os.environ["BOT_TAG"])
+    SCOPES = [str(os.environ["SHEET_SCOPES"])]
+    HEIGHT_SHEET = str(os.environ["SHEET_ID"])
 except KeyError:
     print("one or multiple environment variables were not found")
 
@@ -580,6 +580,12 @@ async def log_question(ctx: discord.Interaction, message: discord.Message):
     channel = bot.get_channel(QUESTIONS)
     await channel.send("\"" + message.content + "\"")
     await ctx.response.send_message("message sent to " + channel.mention, ephemeral = True)
+    
+# @bot.tree.command(name = "test")
+# async def test(ctx):
+#     channel = bot.get_channel(int(GENERAL))
+#     await channel.send("test")
+#     await ctx.response.send_message("testing", ephemeral=True)
 
 #checks for anyone that needs to get ghost pinged every 5 seconds
 @tasks.loop(seconds = 5)
