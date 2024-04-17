@@ -39,6 +39,7 @@ try:
     BOT_TAG = str(os.environ["BOT_TAG"])
     SCOPES = [str(os.environ["SHEET_SCOPES"])]
     HEIGHT_SHEET = str(os.environ["SHEET_ID"])
+    FISHER = int(os.environ["FISHER"])
 except KeyError:
     print("one or multiple environment variables were not found")
 
@@ -49,6 +50,7 @@ PINGLOG = "ghostpings.txt"
 PINGQUEUE = "pings.json"
 MESSAGES = "messages.json"
 STATSJSON = "stats.json"
+PINGOPT = "ping_opt_in.json"
 
 HEIGHTS_RANGE = "A2:D"
 
@@ -99,6 +101,8 @@ with open(MESSAGES, "r", encoding = "utf-8") as messages:
 with open(STATSJSON, "r", encoding = "utf-8") as stats_file:
     stats = json.load(stats_file)
 
+with open(PINGOPT, "r", encoding="utf-8") as ping_opt:
+    ping_opted_in = json.load(ping_opt)["opt_in_list"]
 
 #used to check if a channel is exempt from puckman's wrath
 def exempt(channel):
@@ -520,9 +524,10 @@ async def roulette_autocomplete(ctx: discord.Interaction, current: str):
     
 
 #ghost ping a random person
-@bot.tree.command(name = "random_server_member", description = "annoy someone")
+@bot.tree.command(name = "ghost_ping_fisher", description = "annoy someone")
 async def random_member(ctx):
-    member = random.choice([user for user in ctx.guild.members if not user.bot])
+    # member = get(bot.get_all_members(), name=random.choice([user for user in ping_opted_in]))
+    member = bot.get_user(FISHER)
     delay = random.randrange(0, 14400)
     now = datetime.now()
     sendtime = now + timedelta(seconds = delay)
@@ -539,6 +544,24 @@ async def random_member(ctx):
         json.dump(pings, outfile)
     await ctx.response.send_message(member.display_name + " will be pinged after " + str(delay) + " seconds. (" + sendtime.strftime("%Y-%m-%d %H:%M:%S") + ")", ephemeral = True)
     
+
+# @bot.tree.command(name = "opt_in", description = "opt in to ghost pings")
+# async def opt_in(ctx):
+#     if (ctx.user.name not in ping_opted_in):
+#         ping_opted_in.append(ctx.user.name)
+#     await ctx.response.send_message("done", ephemeral = True)
+#     with open(PINGOPT, "w", encoding = "utf-8") as ping_opt:
+#         json.dump({"opt_in_list" : ping_opted_in}, ping_opt)
+        
+# @bot.tree.command(name = "opt_out", description = "opt out of ghost pings")
+# async def opt_in(ctx):
+#     if (ctx.user.name in ping_opted_in):
+#         ping_opted_in.remove(ctx.user.name)
+#     await ctx.response.send_message("done", ephemeral = True)
+#     with open(PINGOPT, "w", encoding = "utf-8") as ping_opt:
+#         json.dump({"opt_in_list" : ping_opted_in}, ping_opt)
+    
+
 
 #display stats
 @bot.tree.command(name = "stats", description = "show some statistics about how the bot has been used")
